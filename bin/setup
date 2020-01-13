@@ -15,3 +15,16 @@ RAILS_REPOS=(sports)
 for REPO in ${RAILS_REPOS[@]}; do
   docker-compose run ${REPO} bin/setup
 done
+
+# DBのmigration
+result=`docker-compose run sports mysql -u root -h db -e "show databases like 'baseball_development'"`
+if [ -z ${result} ]; then
+  docker-compose run sports bundle exec bin/rails db:create
+fi
+
+R_ENVS=(development test)
+for R_ENV in ${R_ENVS[@]}; do
+  docker-compose run sports bin/rake rake db:migrate -E ${R_ENV}
+done
+
+docker-compose up -d
