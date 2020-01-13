@@ -6,7 +6,7 @@ REPOS=(sports)
 mkdir -p data
 for REPO in ${REPOS[@]}; do
   if [ ! -d "data/${REPO}" ]; then
-    (cd data && https://github.com/tsuayumu/${REPO}.git)
+    (cd data && git clone https://github.com/tsuayumu/${REPO}.git)
   fi
 done
 
