@@ -1,0 +1,24 @@
+version: "3.7"
+services:
+  sports:
+    build:
+      context: containers/ruby
+    environment:
+      BUNDLE_PATH: .bundle
+      BUNDLE_APP_CONFIG: .bundle
+    volumes:
+      - ./data/sports:/app/sports:cached
+    working_dir: /app/sports
+    ports:
+      - "3001:3001"
+    depends_on:
+      - db
+    command: bin/rails s -p 3001 -b '0.0.0.0' -P /tmp/server.pid
+
+  db:
+    image: mysql:5.7
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_ROOT_PASSWORD: ""
+    volumes:
+      - ./data/mysql:/var/lib/mysql:cached

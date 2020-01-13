@@ -1,0 +1,17 @@
+#!/bin/bash
+docker-compose build
+
+# リポジトリのチェックアウト
+REPOS=(sports)
+mkdir -p data
+for REPO in ${REPOS[@]}; do
+  if [ ! -d "data/${REPO}" ]; then
+    (cd data && https://github.com/tsuayumu/${REPO}.git)
+  fi
+done
+
+# Railsの環境準備
+RAILS_REPOS=(sports)
+for REPO in ${RAILS_REPOS[@]}; do
+  docker-compose run ${REPO} bin/setup
+done
