@@ -1,0 +1,36 @@
+#!/bin/bash
+docker-compose build
+
+# リポジトリのチェックアウト
+REPOS=(sports frontend_for_sports)
+mkdir -p data
+for REPO in ${REPOS[@]}; do
+  if [ ! -d "data/${REPO}" ]; then
+    (cd data && git clone https://github.com/tsuayumu/${REPO}.git)
+  fi
+done
+
+# Railsの環境準備
+RAILS_REPOS=(sports)
+for REPO in ${RAILS_REPOS[@]}; do
+  docker-compose run ${REPO} bin/setup
+done
+
+# DBのmigration
+# result=`docker-compose run sports mysql -u root -h db -e "show databases like 'baseball_development'"`
+# if [ -z ${result} ]; then
+#   docker-compose run sports bundle exec bin/rails db:create
+# fi
+
+# R_ENVS=(development test)
+# for R_ENV in ${R_ENVS[@]}; do
+#   docker-compose run sports bundle exec ridgepole -c config/database.yml -E ${R_ENV} --apply -f db/Schemafile
+# done
+
+# nodeの環境準備
+YARN_CONTAINERS=(frontend)
+for YARN_C in ${YARN_CONTAINERS[@]}; do
+  docker-compose run ${YARN_C} yarn install
+done
+
+docker-compose up -d

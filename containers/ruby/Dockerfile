@@ -11,13 +11,18 @@ RUN apt-get update \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
+# localeのUTF8を追加(システムに使いたいロケールがインストールされていない場合）
 RUN locale-gen ja_JP.UTF-8
 
-COPY policy.xml /etc/ImageMagick-6/policy.xml
-
+# メモリ使用量を効率化する
 ENV LD_PRELOAD="/usr/lib/x86_64-linux-gnu/libjemalloc.so.1"
+
+# タイムゾーンの設定
 ENV TZ="Asia/Tokyo"
+
+# ロケール設定
 ENV LANG=ja_JP.UTF-8
+
+# locale-gen ja_JP.UTF-8と被ってる？？
 RUN localedef -i ja_JP -c -f UTF-8 -A /usr/share/locale/locale.alias ja_JP.UTF-8
 
-RUN mkdir -p /etc/secret

@@ -1,0 +1,52 @@
+version: "3.7"
+services:
+  sports-web:
+    build:
+      context: containers/nginx
+    ports:
+      - "4000:80"
+    depends_on:
+      - frontend
+      - backend
+
+  frontend:
+    build:
+      context: containers/node      
+    volumes:
+      - ./data/frontend_for_sports:/app/frontend_for_sports
+      - ~/.ssh:/root/.ssh:ro
+    working_dir: /app/frontend_for_sports
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    command: yarn dev -p 3000 -H '0.0.0.0'
+
+  backend:
+    build:
+      context: containers/ruby
+    environment:
+      BUNDLE_PATH: .bundle
+      BUNDLE_APP_CONFIG: .bundle
+      DOCKER_ENV: development
+      RAILS_ENV: production
+      DB_HOST: db
+      DB_USERNAME: root
+      DB_PASSWORD: ""
+      SECRET_KEY_BASE: b81b999811e08303cf9d3ab4f5f61e6a8260c71ef5a26b11d5fc44a8bda6659845c8d74c6aa3e59a7d337ef2b80b80bebd35e2853284dc97afbdff8f93c30ff7
+    volumes:
+      - ./data/sports:/app/sports
+    working_dir: /app/sports
+    ports:
+      - "3001:3001"
+    depends_on:
+      - db
+    command: bin/rails s -p 3001 -b '0.0.0.0' -P /tmp/server.pid
+
+  db:
+    image: mysql:5.7
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_ROOT_PASSWORD: ""
+    volumes:
+      - ./data/mysql:/var/lib/mysql:cached
