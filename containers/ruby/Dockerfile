@@ -8,6 +8,7 @@ RUN apt-get update \
          build-essential \
          locales \
          vim \
+         cron \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
