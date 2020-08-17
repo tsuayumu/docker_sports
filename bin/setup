@@ -2,7 +2,7 @@
 docker-compose build
 
 # リポジトリのチェックアウト
-REPOS=(backend_sports frontend_sports)
+REPOS=(backend-sports frontend-sports)
 mkdir -p data
 for REPO in ${REPOS[@]}; do
   if [ ! -d "data/${REPO}" ]; then
